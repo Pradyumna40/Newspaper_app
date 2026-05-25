@@ -1,35 +1,59 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+
 {% block content %}
-<div class="article-entry">
-    <h2>{{ object.title }}</h2>
-    <p>by {{ object.author }}</p>
-    <p>{{ object.body }}</p>
+<div class="max-w-3xl mx-auto">
 
-    <div>
-        <hr>
-        <h4>Comments</h4>
+  <!-- Article -->
+  <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mb-6">
+    <h2 class="text-2xl font-bold text-gray-900 mb-1">{{ object.title }}</h2>
+    <p class="text-sm text-gray-500 mb-4">by {{ object.author }}</p>
+    <p class="text-gray-700 leading-relaxed">{{ object.body }}</p>
+  </div>
+
+  <!-- Comments -->
+  <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mb-6">
+    <h4 class="text-lg font-semibold text-gray-800 mb-4">Comments</h4>
+
+    {% if article.comment_set.all %}
+      <div class="space-y-3 mb-6">
         {% for comment in article.comment_set.all %}
-        <p>{{ comment.author }} &middot; {{ comment }}</p>
+        <p class="text-sm text-gray-700">
+          <span class="font-semibold">{{ comment.author }}</span>
+          <span class="text-gray-400 mx-1">&middot;</span>
+          {{ comment }}
+        </p>
         {% endfor %}
-        <hr>
+      </div>
+    {% else %}
+      <p class="text-sm text-gray-400 mb-6">No comments yet.</p>
+    {% endif %}
 
+    <hr class="border-gray-100 mb-6">
 
+    <!-- Add comment form -->
+    <h4 class="text-base font-semibold text-gray-800 mb-3">Add a comment</h4>
+    <form action="" method="post">
+      {% csrf_token %}
+      {{ form|crispy }}
+      <button type="submit"
+              class="mt-3 px-5 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition">
+        Save
+      </button>
+    </form>
+  </div>
 
-        <h4>Add a comment</h4>
-        <form action="" method="post">
-            {% csrf_token %}
-            {{ form|crispy}}
-            <button class="btn btn-success ms-2" type="submit">Save</button>
-        </form>
-        {% if article.author.pk == request.user.pk %}
+  <!-- Actions -->
+  <div class="flex items-center gap-4 text-sm">
+    {% if article.author.pk == request.user.pk %}
+      <a href="{% url 'article_edit' article.pk %}"
+         class="text-blue-600 hover:text-blue-800 transition">Edit</a>
+      <a href="{% url 'article_delete' article.pk %}"
+         class="text-red-500 hover:text-red-700 transition">Delete</a>
+    {% endif %}
+    <a href="{% url 'article_list' %}"
+       class="text-gray-500 hover:text-gray-700 transition">&larr; All Articles</a>
+  </div>
 
-        <p><a href="{% url 'article_edit' article.pk %}">Edit</a>
-        <a href="{% url 'article_delete' article.pk %}">Delete</a></p>
-        {% endif %}
-
-        <p>Back to <a href="{% url 'article_list' %}">All Articles</a></p>
-
-    </div>
 </div>
 {% endblock content %}

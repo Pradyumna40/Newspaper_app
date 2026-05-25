@@ -2,10 +2,25 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<h1>Delete</h1>   
-<form action="" method="post">
-    {% csrf_token %}
-    <p>Are you sure you want to delete "{{ article.title }}"?</p>
-    <button class="btn btn-danger ms-2" type="submit">Confirm</button>
-</form>
+<div class="max-w-md mx-auto">
+  <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+    <h1 class="text-2xl font-bold text-gray-900 mb-4">Delete Article</h1>
+    <p class="text-gray-600 mb-6">
+      Are you sure you want to delete
+      <span class="font-semibold text-gray-900">"{{ article.title }}"</span>?
+      This action cannot be undone.
+    </p>
+    <form action="" method="post" class="flex items-center gap-3">
+      {% csrf_token %}
+      <button type="submit"
+              class="px-5 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 transition">
+        Confirm Delete
+      </button>
+      <a href="{% url 'article_list' %}"
+         class="px-5 py-2 border border-gray-300 text-sm text-gray-700 rounded-md hover:bg-gray-100 transition">
+        Cancel
+      </a>
+    </form>
+  </div>
+</div>
 {% endblock content %}
